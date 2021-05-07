@@ -1,2 +1,6 @@
 # Needleman-Wunsch-Strottmann
-Implementation of the Needleman-Wunsch-Algorithim
+Implementation of the Needleman-Wunsch-Algorithim in matlab. With this algorithm, both sequences of nucleotides and amino acid chains can be aligned. The optimal alignment score can be calculated with linear gap costs as well as with affine gap costs. The function input works as follows:
+[Score, Alignment, Scoringmatrix, Plot] = nw_strottmann(seq1,seq2,AoN,scm,gapopen,gapextend)
+Score returns you the optimal global alignment score. Alignment returns a character array showing the optimal global alignment of two sequences. Scoringmatrix returns the recursively calculated scoring matrix. Plot returns a figure which graphically shows the results. 
+Seq1 and seq2 are the input arguments of the two sequences which we want to align (for example:'HEAE','AEE'). AoN determines whether we are looking at amino acids or nucleotide sequences('AA' for amino acids, 'NN' for nucleotides). Scm is the substitution matrix that should be used to align the sequences (for example: blosum(50)). Gapopen is the gap-open penalty for opening a gap. Gapextend ist the penalty for extending a gap. If gapopen = gapextend the algorithm works with linear gap costs. Gapopen and gapextend have to be scalar values.
+
