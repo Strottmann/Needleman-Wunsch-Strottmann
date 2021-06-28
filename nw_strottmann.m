@@ -268,23 +268,80 @@ i = AlignmentOptions.lseq2+1;
 j = AlignmentOptions.lseq1+1;
 n = 0;
 nn = 0;
+t = 0;
 traceback_hilfe = [0,0,0];
 
+traceback_hilfe(1) = scoring_matrix(i,j);
+traceback_hilfe(2) = hilfs_matrix_x(i,j);
+traceback_hilfe(3) = hilfs_matrix_y(i,j);
+    
+if traceback_hilfe(1) == max(traceback_hilfe)
+    tracebackmatrix = direction_matrix;
+    t = 1;
+elseif traceback_hilfe(2) == max(traceback_hilfe)
+    tracebackmatrix = direction_matrix_x;
+    t = 2;
+else
+    tracebackmatrix = direction_matrix_y;
+    t = 3;
+end
+
 while i ~= 1 || j ~= 1
-    traceback_hilfe(1) = scoring_matrix(i,j);
-    traceback_hilfe(2) = hilfs_matrix_x(i,j);
-    traceback_hilfe(3) = hilfs_matrix_y(i,j);
-    if traceback_hilfe(1) == max(traceback_hilfe)
-        i = i-1;
+    if tracebackmatrix(i,j) == 1 && t == 1
         j = j-1;
+        i = i-1; 
+        n = n+1;
+        nn = nn+1; 
+    elseif tracebackmatrix(i,j) == 3 && t == 1
+        j = j-1;
+        i = i-1; 
         n = n+1;
         nn = nn+1;
-    elseif traceback_hilfe(2) == max(traceback_hilfe)
+        tracebackmatrix = direction_matrix_x;
+        t = 2;
+    elseif tracebackmatrix(i,j) == 5 && t == 1
+        j = j-1;
+        i = i-1; 
+        n = n+1;
+        nn = nn+1;
+        tracebackmatrix = direction_matrix_y;
+        t = 3;
+    elseif tracebackmatrix(i,j) == 2 && t == 1
+        j = j-1;
+        i = i-1; 
+        n = n+1;
+        nn = nn+1;
+        tracebackmatrix = direction_matrix_x;
+        t = 2;
+    elseif tracebackmatrix(i,j) == 4 && t == 1
+        j = j-1;
+        i = i-1; 
+        n = n+1;
+        nn = nn+1;
+        tracebackmatrix = direction_matrix_y;
+        t = 3;
+    elseif tracebackmatrix(i,j) == 1 && t == 2
         i = i-1;
         n = n+1;
-    else 
+        tracebackmatrix = direction_matrix;
+        t = 1;
+    elseif tracebackmatrix(i,j) == 2 && t == 2
+        i = i-1;
+        n = n+1;
+    elseif tracebackmatrix(i,j) == 3 && t == 2
+        i = i-1;
+        n = n+1;
+    elseif tracebackmatrix(i,j) == 1 && t == 3
         j = j-1;
-        n = n+1; 
+        n = n+1;
+        tracebackmatrix = direction_matrix;
+        t = 1;
+    elseif tracebackmatrix(i,j) == 5 && t == 3
+        j = j-1;
+        n = n+1;
+    elseif tracebackmatrix(i,j) == 4 && t == 3
+        j = j-1;
+        n = n+1;
     end
 end
 
@@ -293,19 +350,28 @@ j = AlignmentOptions.lseq1+1;
 k = 0;
 v = 0;
 h = 0;
+t = 0;
 x = zeros(nn);
 y = zeros(nn);
 SEQ1 = '';
 SEQ2 = '';
 VERB = '';
+    
+if traceback_hilfe(1) == max(traceback_hilfe)
+    tracebackmatrix = direction_matrix;
+    t = 1;
+elseif traceback_hilfe(2) == max(traceback_hilfe)
+    tracebackmatrix = direction_matrix_x;
+    t = 2;
+else
+    tracebackmatrix = direction_matrix_y;
+    t = 3;
+end
 
 while i ~= 1 || j ~= 1
-    traceback_hilfe(1) = scoring_matrix(i,j);
-    traceback_hilfe(2) = hilfs_matrix_x(i,j);
-    traceback_hilfe(3) = hilfs_matrix_y(i,j);
-    if traceback_hilfe(1) == max(traceback_hilfe)
-        i = i-1;
+    if tracebackmatrix(i,j) == 1 && t == 1
         j = j-1;
+        i = i-1; 
         SEQ1(n-h) = seq1(end-v);
         SEQ2(n-h) = seq2(end-k);
         x(nn) = AlignmentOptions.lseq1-v;
@@ -326,14 +392,146 @@ while i ~= 1 || j ~= 1
         k = k+1;
         v = v+1;
         h = h+1;
-    elseif traceback_hilfe(2) == max(traceback_hilfe)
+    elseif tracebackmatrix(i,j) == 3 && t == 1
+        j = j-1;
+        i = i-1; 
+        SEQ1(n-h) = seq1(end-v);
+        SEQ2(n-h) = seq2(end-k);
+        x(nn) = AlignmentOptions.lseq1-v;
+        y(nn) = AlignmentOptions.lseq2-k;
+        nn = nn-1;
+        if AlignmentOptions.type == 'AA'
+            value = AlignmentOptions.scm(bst_zu_zahl_A(SEQ2(n-h)),bst_zu_zahl_A(SEQ1(n-h)));
+        else
+            value = AlignmentOptions.scm(bst_zu_zahl_N(SEQ2(n-h)),bst_zu_zahl_N(SEQ1(n-h)));
+        end
+        if SEQ1(n-h) == SEQ2(n-h)
+            VERB(n-h) = '|';
+        elseif value >= 0
+            VERB(n-h) = ':';
+        else
+            VERB(n-h) = ' ';
+        end
+        k = k+1;
+        v = v+1;
+        h = h+1;
+        tracebackmatrix = direction_matrix_x;
+        t = 2;
+    elseif tracebackmatrix(i,j) == 5 && t == 1
+        j = j-1;
+        i = i-1; 
+        SEQ1(n-h) = seq1(end-v);
+        SEQ2(n-h) = seq2(end-k);
+        x(nn) = AlignmentOptions.lseq1-v;
+        y(nn) = AlignmentOptions.lseq2-k;
+        nn = nn-1;
+        if AlignmentOptions.type == 'AA'
+            value = AlignmentOptions.scm(bst_zu_zahl_A(SEQ2(n-h)),bst_zu_zahl_A(SEQ1(n-h)));
+        else
+            value = AlignmentOptions.scm(bst_zu_zahl_N(SEQ2(n-h)),bst_zu_zahl_N(SEQ1(n-h)));
+        end
+        if SEQ1(n-h) == SEQ2(n-h)
+            VERB(n-h) = '|';
+        elseif value >= 0
+            VERB(n-h) = ':';
+        else
+            VERB(n-h) = ' ';
+        end
+        k = k+1;
+        v = v+1;
+        h = h+1;
+        tracebackmatrix = direction_matrix_y;
+        t = 3;
+    elseif tracebackmatrix(i,j) == 2 && t == 1
+        j = j-1;
+        i = i-1; 
+        SEQ1(n-h) = seq1(end-v);
+        SEQ2(n-h) = seq2(end-k);
+        x(nn) = AlignmentOptions.lseq1-v;
+        y(nn) = AlignmentOptions.lseq2-k;
+        nn = nn-1;
+        if AlignmentOptions.type == 'AA'
+            value = AlignmentOptions.scm(bst_zu_zahl_A(SEQ2(n-h)),bst_zu_zahl_A(SEQ1(n-h)));
+        else
+            value = AlignmentOptions.scm(bst_zu_zahl_N(SEQ2(n-h)),bst_zu_zahl_N(SEQ1(n-h)));
+        end
+        if SEQ1(n-h) == SEQ2(n-h)
+            VERB(n-h) = '|';
+        elseif value >= 0
+            VERB(n-h) = ':';
+        else
+            VERB(n-h) = ' ';
+        end
+        k = k+1;
+        v = v+1;
+        h = h+1;
+        tracebackmatrix = direction_matrix_x;
+        t = 2;
+    elseif tracebackmatrix(i,j) == 4 && t == 1
+        j = j-1;
+        i = i-1; 
+        SEQ1(n-h) = seq1(end-v);
+        SEQ2(n-h) = seq2(end-k);
+        x(nn) = AlignmentOptions.lseq1-v;
+        y(nn) = AlignmentOptions.lseq2-k;
+        nn = nn-1;
+        if AlignmentOptions.type == 'AA'
+            value = AlignmentOptions.scm(bst_zu_zahl_A(SEQ2(n-h)),bst_zu_zahl_A(SEQ1(n-h)));
+        else
+            value = AlignmentOptions.scm(bst_zu_zahl_N(SEQ2(n-h)),bst_zu_zahl_N(SEQ1(n-h)));
+        end
+        if SEQ1(n-h) == SEQ2(n-h)
+            VERB(n-h) = '|';
+        elseif value >= 0
+            VERB(n-h) = ':';
+        else
+            VERB(n-h) = ' ';
+        end
+        k = k+1;
+        v = v+1;
+        h = h+1;
+        tracebackmatrix = direction_matrix_y;
+        t = 3;
+    elseif tracebackmatrix(i,j) == 1 && t == 2
         i = i-1;
         SEQ1(n-h) = '-';
         SEQ2(n-h) = seq2(end-k);
         VERB(n-h) = ' ';
         k = k+1;
         h = h+1;
-    else 
+        tracebackmatrix = direction_matrix;
+        t = 1;
+    elseif tracebackmatrix(i,j) == 2 && t == 2
+        i = i-1;
+        SEQ1(n-h) = '-';
+        SEQ2(n-h) = seq2(end-k);
+        VERB(n-h) = ' ';
+        k = k+1;
+        h = h+1;
+    elseif tracebackmatrix(i,j) == 3 && t == 2
+        i = i-1;
+        SEQ1(n-h) = '-';
+        SEQ2(n-h) = seq2(end-k);
+        VERB(n-h) = ' ';
+        k = k+1;
+        h = h+1;
+    elseif tracebackmatrix(i,j) == 1 && t == 3
+        j = j-1;
+        SEQ1(n-h) = seq1(end-v);
+        SEQ2(n-h) = '-';
+        VERB(n-h) = ' ';
+        v = v+1;
+        h = h+1;
+        tracebackmatrix = direction_matrix;
+        t = 1;
+    elseif tracebackmatrix(i,j) == 5 && t == 3
+        j = j-1;
+        SEQ1(n-h) = seq1(end-v);
+        SEQ2(n-h) = '-';
+        VERB(n-h) = ' ';
+        v = v+1;
+        h = h+1;
+    elseif tracebackmatrix(i,j) == 4 && t == 3
         j = j-1;
         SEQ1(n-h) = seq1(end-v);
         SEQ2(n-h) = '-';
